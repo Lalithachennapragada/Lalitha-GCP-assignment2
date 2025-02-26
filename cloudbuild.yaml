@@ -1,0 +1,32 @@
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}', 
+           '.']
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'assignment2'
+    - '--image'
+    - 'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}'
+    - '--region'
+    - 'us-central1'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'
+
+images:
+  - 'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}'
+
+options:
+    defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET

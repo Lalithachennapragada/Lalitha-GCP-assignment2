@@ -4,5 +4,7 @@ services:
       context: .
     environment:
       NODE_ENV: production
+      PORT: 8080  # Ensure the container runs on the correct port
     ports:
-      - 3000:3000
+      - 8080:8080
+

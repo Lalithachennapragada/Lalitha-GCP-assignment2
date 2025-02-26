@@ -2,16 +2,33 @@ steps:
   # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 
-           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${COMMIT_SHA}', 
+           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}', 
            '.']
 
   # Step 2: Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 
-           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${COMMIT_SHA}']
+           'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}']
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+    - 'run'
+    - 'deploy'
+    - 'assignment2'
+    - '--image'
+    - 'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}'
+    - '--region'
+    - 'us-central1'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'
+    - '--port'
+    - '8080'
 
 images:
-  - 'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${COMMIT_SHA}'
+  - 'us-central1-docker.pkg.dev/supple-gearbox-447219-d0/lalitha-100979071/assignment2:${SHORT_SHA}'
 
 options:
-    defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET

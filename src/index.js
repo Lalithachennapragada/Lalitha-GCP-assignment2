@@ -6,6 +6,9 @@ const addItem = require('./routes/addItem');
 const updateItem = require('./routes/updateItem');
 const deleteItem = require('./routes/deleteItem');
 
+// Set the port to the Cloud Run assigned port or default to 8080
+const PORT = process.env.PORT || 8080;
+
 app.use(express.json());
 app.use(express.static(__dirname + '/static'));
 
@@ -15,12 +18,13 @@ app.put('/items/:id', updateItem);
 app.delete('/items/:id', deleteItem);
 
 db.init().then(() => {
-    app.listen(3000, () => console.log('Listening on port 3000'));
+    app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 }).catch((err) => {
-    console.error(err);
+    console.error('Database initialization failed:', err);
     process.exit(1);
 });
 
+// Handle graceful shutdown
 const gracefulShutdown = () => {
     db.teardown()
         .catch(() => {})
